@@ -1,19 +1,162 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>READMIND</title>
-<link rel="stylesheet" href="styles.css">
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>READMIND</title>
+  
+  <style>
+    /* Estilos generales del cuerpo */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    /* Estilos de la tarjeta principal */
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: white;
+      border-radius: 22px;
+      padding: 16px;
+      animation: fade .6s ease;
+      box-sizing: border-box;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .cover {
+      width: 100%;
+      border-radius: 18px;
+      display: block;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: #2f80ed;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    button:hover { transform: translateY(-2px); }
+    button:active { transform: scale(.96); }
+
+    #progress {
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    #time {
+      text-align: center;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    /* Contenedor para centrar la imagen del botón */
+    .contenedor-enlace-web {
+      text-align: center;
+      margin-top: 300px; 
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    .enlace-imagen {
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    /* Estilos para la imagen del botón */
+    .imagen-boton {
+      max-width: 260px; /* Tamaño máximo deseado para la imagen (puedes cambiarlo) */
+      width: 100%;       /* Para que sea responsive en celulares */
+      height: auto;      /* Mantiene la proporción de la imagen */
+      display: block;
+      margin: 0 auto;
+      transition: transform 0.2s ease;
+    }
+
+    /* Efecto al pasar el mouse por encima */
+    .imagen-boton:hover {
+      transform: scale(1.05); /* Se agranda un 5% */
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-<div class="card">
-<img class="cover" src="portada.jpg" alt="Portada">
-<div class="controls">
-<button id="play">▶ Hear</button>
-</div>
-<input id="progress" type="range" min="0" max="100" value="0">
-<div id="time">00:00 / 00:00</div>
-<audio id="audio"><source src="audio.mp3" type="audio/mpeg"></audio>
-</div>
-<script src="script.js"></script>
-</body></html>
+
+  <div class="card">
+    <img class="cover" src="portada.png" alt="Portada">
+    
+    <div class="controls">
+      <button id="play">▶ Hear</button>
+    </div>
+    
+    <input id="progress" type="range" min="0" max="100" value="0">
+    <div id="time">00:00 / 00:00</div>
+    <audio id="audio"><source src="audio.mp3" type="audio/mpeg"></audio>
+
+    <!-- BOTÓN EN FORMA DE IMAGEN -->
+    <div class="contenedor-enlace-web">
+      <!-- 1. Cambia '#' por la URL de tu página web de destino -->
+      <a href="https://readmindbk.github.io/WEB/" class="enlace-imagen" target="_blank">
+        <!-- 2. Cambia 'tu-imagen-boton.png' por el nombre exacto de tu archivo de imagen -->
+        <img class="imagen-boton" src="web.png" alt="Sitio Web">
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const a = document.getElementById('audio');
+    const p = document.getElementById('play');
+    const r = document.getElementById('progress');
+    const t = document.getElementById('time');
+
+    function f(s) {
+      if (!isFinite(s)) return "00:00";
+      let m = Math.floor(s / 60), x = Math.floor(s % 60);
+      return String(m).padStart(2, '0') + ':' + String(x).padStart(2, '0');
+    }
+
+    p.onclick = () => {
+      if (a.paused) {
+        a.play();
+        p.textContent = '⏸ Pause';
+        p.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.08)' }, { transform: 'scale(1)' }], { duration: 250 });
+      } else {
+        a.pause();
+        p.textContent = '▶ Hear';
+      }
+    };
+
+    a.ontimeupdate = () => {
+      r.value = (a.currentTime / (a.duration || 1)) * 100;
+      t.textContent = f(a.currentTime) + ' / ' + f(a.duration);
+    };
+
+    r.oninput = () => a.currentTime = (r.value / 100) * (a.duration || 0);
+    a.onended = () => p.textContent = '▶ Hear';
+  </script>
+
+</body>
+</html>
